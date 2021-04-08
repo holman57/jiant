@@ -87,6 +87,7 @@ from jiant.tasks.lib.mcscript import MCScriptTask
 from jiant.tasks.lib.arct import ArctTask
 from jiant.tasks.lib.winogrande import WinograndeTask
 from jiant.tasks.lib.piqa import PiqaTask
+from jiant.tasks.lib.spatial import SpatialTask
 
 from jiant.tasks.core import Task
 from jiant.utils.python.io import read_json
@@ -159,6 +160,7 @@ TASK_DICT = {
     "senteval_word_content": SentEvalWordContentTask,
     "snli": SnliTask,
     "socialiqa": SocialIQATask,
+    "spatial": SpatialTask,
     "spr1": Spr1Task,
     "spr2": Spr2Task,
     "squad": SquadTask,

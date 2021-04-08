@@ -89,6 +89,10 @@ def download_task_data_and_write_config(task_name: str, task_data_path: str, tas
         download_ropes_data_and_write_config(
             task_name=task_name, task_data_path=task_data_path, task_config_path=task_config_path
         )
+    elif task_name == "spatial":
+        download_spatial_data_and_write_config(
+            task_name=task_name, task_data_path=task_data_path, task_config_path=task_config_path
+        )
     elif task_name in [
         "acceptability_definiteness",
         "acceptability_coord",
@@ -1102,3 +1106,28 @@ def download_senteval_data_and_write_config(
         data={"task": task_name, "paths": {"data": data_path}, "name": task_name},
         path=task_config_path,
     )
+
+
+
+def download_spatial_data_and_write_config(
+    task_name: str, task_data_path: str, task_config_path: str
+):
+    os.makedirs(task_data_path, exist_ok=True)
+    data_path = os.path.join(task_data_path, "data.tsv")
+    download_utils.download_file(
+        url="http://lukeholman.net/remote/spatial_template_sentences.csv",
+        file_path=data_path,
+    )
+    py_io.write_json(
+        data={
+            "task": "spatial",
+            "paths": {
+                "train": os.path.join(task_data_path, "train.jsonl"),
+                "val": os.path.join(task_data_path, "valid.jsonl"),
+                "test": os.path.join(task_data_path, "tests.jsonl"),
+            },
+            "name": "spatial",
+        },
+        path=task_config_path,
+    )
+

@@ -75,7 +75,8 @@ class JiantRunner:
             self.run_train_step(
                 train_dataloader_dict=train_dataloader_dict, train_state=train_state
             )
-            yield train_state
+            if train_state is not None:
+                yield train_state
 
     def resume_train_context(self, train_state, verbose=True):
         train_dataloader_dict = self.get_train_dataloader_dict()
@@ -270,6 +271,7 @@ def run_val(
     total_eval_loss = 0
     nb_eval_steps, nb_eval_examples = 0, 0
     evaluation_scheme = evaluate.get_evaluation_scheme_for_task(task=task)
+    print(evaluation_scheme)
     eval_accumulator = evaluation_scheme.get_accumulator()
 
     for step, (batch, batch_metadata) in enumerate(
@@ -293,6 +295,7 @@ def run_val(
 
         nb_eval_examples += len(batch)
         nb_eval_steps += 1
+    print(f"total_eval_loss: {total_eval_loss}\nnb_eval_steps: {nb_eval_steps}")
     eval_loss = total_eval_loss / nb_eval_steps
     tokenizer = (
         jiant_model.tokenizer

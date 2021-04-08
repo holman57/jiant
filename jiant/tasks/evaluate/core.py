@@ -314,12 +314,43 @@ class MultiLabelAccAndF1EvaluationScheme(BaseLogitsEvaluationScheme):
     @classmethod
     def compute_metrics_from_preds_and_labels(cls, preds, labels):
         # noinspection PyUnresolvedReferences
+        print(preds)
+        print(labels)
+        print(cls)
         acc = float((preds == labels).mean())
         labels = np.array(labels)
         minor = {
             "acc": acc,
             "f1_micro": f1_score(y_true=labels, y_pred=preds, average="micro"),
             "acc_and_f1_micro": (acc + f1_score(y_true=labels, y_pred=preds, average="micro")) / 2,
+        }
+        return Metrics(major=minor["acc_and_f1_micro"], minor=minor)
+
+
+class SpatialAccAndF1EvaluationScheme(BaseLogitsEvaluationScheme):
+    def get_labels_from_cache_and_examples(self, task, cache, examples):
+        return get_multi_label_ids_from_cache(cache=cache)
+
+    def get_preds_from_accumulator(self, task, accumulator):
+        logits = accumulator.get_accumulated()
+        return (logits > 0.5).astype(int)
+
+    @classmethod
+    def compute_metrics_from_preds_and_labels(cls, preds, labels):
+        # noinspection PyUnresolvedReferences
+        pred_labels = [x[1] for x in preds]
+        total = len(labels)
+        gold = 0
+        for a, b in zip(labels, pred_labels):
+            if a == b:
+                gold += 1
+        # acc = float((pred_labels == labels).mean()) 
+        acc = gold / total
+        labels = np.array(labels)
+        minor = {
+            "acc": acc,
+            "f1_micro": f1_score(y_true=labels, y_pred=pred_labels, average="micro"),
+            "acc_and_f1_micro": (acc + f1_score(y_true=labels, y_pred=pred_labels, average="micro")) / 2,
         }
         return Metrics(major=minor["acc_and_f1_micro"], minor=minor)
 
@@ -1037,6 +1068,8 @@ def get_evaluation_scheme_for_task(task) -> BaseEvaluationScheme:
         return MultiLabelAccAndF1EvaluationScheme()
     elif isinstance(task, tasks.ReCoRDTask):
         return ReCordEvaluationScheme()
+    elif isinstance(task, tasks.SpatialTask):
+        return SpatialAccAndF1EvaluationScheme()
     elif isinstance(
         task,
         (
