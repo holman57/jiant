@@ -27,7 +27,7 @@ class Example(BaseExample):
         return TokenizedExample(
             guid=self.guid,
             text=tokenizer.tokenize(self.sentence),
-            label_id=self.label,
+            label_id=int(self.label)
         )
 
 

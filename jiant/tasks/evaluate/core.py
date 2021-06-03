@@ -328,31 +328,22 @@ class MultiLabelAccAndF1EvaluationScheme(BaseLogitsEvaluationScheme):
 
 
 class SpatialAccAndF1EvaluationScheme(BaseLogitsEvaluationScheme):
-    def get_labels_from_cache_and_examples(self, task, cache, examples):
-        return get_multi_label_ids_from_cache(cache=cache)
-
     def get_preds_from_accumulator(self, task, accumulator):
         logits = accumulator.get_accumulated()
-        return (logits > 0.5).astype(int)
+        return np.argmax(logits, axis=1)
 
     @classmethod
     def compute_metrics_from_preds_and_labels(cls, preds, labels):
         # noinspection PyUnresolvedReferences
-        pred_labels = [x[1] for x in preds]
-        total = len(labels)
-        gold = 0
-        for a, b in zip(labels, pred_labels):
-            if a == b:
-                gold += 1
-        # acc = float((pred_labels == labels).mean()) 
-        acc = gold / total
+        acc = float((preds == labels).mean())
         labels = np.array(labels)
+        f1 = f1_score(y_true=labels, y_pred=preds)
         minor = {
             "acc": acc,
-            "f1_micro": f1_score(y_true=labels, y_pred=pred_labels, average="micro"),
-            "acc_and_f1_micro": (acc + f1_score(y_true=labels, y_pred=pred_labels, average="micro")) / 2,
+            "f1": f1,
+            "acc_and_f1": (acc + f1) / 2,
         }
-        return Metrics(major=minor["acc_and_f1_micro"], minor=minor)
+        return Metrics(major=minor["acc_and_f1"], minor=minor)
 
 
 class AccAndF1EvaluationScheme(BaseLogitsEvaluationScheme):
