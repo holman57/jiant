@@ -1,9 +1,0 @@
-{
-  "task": "spatial",
-  "paths": {
-    "train": "spatial_experiment/tasks/data/spatial/train.jsonl",
-    "test": "spatial_experiment/tasks/data/spatial/test.jsonl",
-    "val": "spatial_experiment/tasks/data/spatial/val.jsonl"
-  },
-  "name": "spatial"
-}

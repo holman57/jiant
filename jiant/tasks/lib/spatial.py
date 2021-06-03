@@ -9,12 +9,10 @@ from jiant.tasks.core import (
     BaseTokenizedExample,
     BaseDataRow,
     BatchMixin,
-    GlueMixin,
     Task,
     TaskTypes,
 )
-from jiant.tasks.lib.templates.shared import double_sentence_featurize, labels_to_bimap, single_sentence_featurize
-from jiant.utils.python.io import read_file_lines
+from jiant.tasks.lib.templates.shared import labels_to_bimap, single_sentence_featurize
 
 
 @dataclass
@@ -68,7 +66,6 @@ class Batch(BatchMixin):
 
 
 class SpatialTask(Task):
-
     TASK_TYPE = TaskTypes.CLASSIFICATION
     LABELS = ["0", "1"]
     LABEL_TO_ID, ID_TO_LABEL = labels_to_bimap(LABELS)
