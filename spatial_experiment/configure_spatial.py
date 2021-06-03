@@ -4,7 +4,7 @@ import jiant.utils.display as display
 import os
 
 jiant_run_config = configurator.SimpleAPIMultiTaskConfigurator(
-    task_config_base_path="./spatial_experiment/tasks/configs",
+    task_config_base_path="./spatial_experiment",
     task_cache_base_path="./spatial_experiment/cache",
     train_task_name_list=["spatial"],
     val_task_name_list=["spatial"],
