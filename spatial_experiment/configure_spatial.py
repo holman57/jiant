@@ -1,4 +1,5 @@
 import jiant.proj.main.scripts.configurator as configurator
+import jiant.proj.main.export_model as export_model
 import jiant.utils.python.io as py_io
 import jiant.utils.display as display
 import os
