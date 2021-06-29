@@ -76,7 +76,7 @@ setup(
         "torch == 1.6.0",
         "tqdm == 4.46.0",
         "transformers == 4.1.0",
-        "torchvision == 0.6.0",
+        "torchvision == 0.9.1",
     ],
     extras_require=extras,
     python_requires=">=3.6.0",
