@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 import seqeval.metrics as seqeval_metrics
 import torch
-from sklearn.metrics import f1_score, matthews_corrcoef
+from sklearn.metrics import f1_score, matthews_corrcoef, recall_score, precision_score
 from scipy.stats import pearsonr, spearmanr
 from typing import Dict, List
 
@@ -338,9 +338,13 @@ class SpatialAccAndF1EvaluationScheme(BaseLogitsEvaluationScheme):
         acc = float((preds == labels).mean())
         labels = np.array(labels)
         f1 = f1_score(y_true=labels, y_pred=preds)
+        recall = recall_score(y_true=labels, y_pred=preds)
+        precision = precision_score(y_true=labels, y_pred=preds)
         minor = {
             "acc": acc,
             "f1": f1,
+            "recall": recall,
+            "precision": precision,
             "acc_and_f1": (acc + f1) / 2,
         }
         return Metrics(major=minor["acc_and_f1"], minor=minor)
