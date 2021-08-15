@@ -26,31 +26,54 @@ export_model.export_model(
     output_base_path="./spatial_experiment/models/bert",
 )
 
+def execute_training_loop():
+    tokenize_and_cache.main(tokenize_and_cache.RunConfiguration(
+        task_config_path=f"./spatial_experiment/spatial_config.json",
+        hf_pretrained_model_name_or_path="bert-base-uncased",
+        output_dir=f"./spatial_experiment/cache/spatial",
+        phases=["train", "val"],
+    ))
+    run_args = main_runscript.RunConfiguration(
+        jiant_task_container_config_path="./spatial_experiment/run_configs/spatial_run_config.json",
+        output_dir="./spatial_experiment/runs/spatial",
+        hf_pretrained_model_name_or_path="bert-base-uncased",
+        model_path="./spatial_experiment/models/bert/model/model.p",
+        model_config_path="./spatial_experiment/models/bert/model/config.json",
+        learning_rate=1e-5,
+        eval_every_steps=500,
+        do_train=True,
+        do_val=True,
+        do_save=True,
+        force_overwrite=True,
+    )
+    main_runscript.run_loop(run_args)
 
 
-tokenize_and_cache.main(tokenize_and_cache.RunConfiguration(
-    task_config_path=f"./spatial_experiment/spatial_config.json",
-    hf_pretrained_model_name_or_path="bert-base-uncased",
-    output_dir=f"./spatial_experiment/cache/spatial",
-    phases=["train", "val"],
-))
+d = '../spatial-commonsense/data/baseline'
+baseline_path = [os.path.join(d, o) for o in os.listdir(d) if os.path.isdir(os.path.join(d, o))]
 
-
-
-
-
-run_args = main_runscript.RunConfiguration(
-    jiant_task_container_config_path="./spatial_experiment/run_configs/spatial_run_config.json",
-    output_dir="./spatial_experiment/runs/spatial",
-    hf_pretrained_model_name_or_path="bert-base-uncased",
-    model_path="./spatial_experiment/models/bert/model/model.p",
-    model_config_path="./spatial_experiment/models/bert/model/config.json",
-    learning_rate=1e-5,
-    eval_every_steps=500,
-    do_train=True,
-    do_val=True,
-    do_save=True,
-    force_overwrite=True,
-)
-
-main_runscript.run_loop(run_args)
+for dir in baseline_path:
+    dir_name = dir.split('/')[-1]
+    with open(dir_name + '.csv', 'w') as f:
+        f.write('name,acc,f1,recall,precision\n')
+    print('wrote:', dir_name + '.csv')
+    split_paths = [os.path.join(dir, o) for o in os.listdir(dir) if os.path.isdir(os.path.join(dir, o))]
+    execute_training_loop()
+    with open('output.csv', 'r') as f:
+        output = f.read()
+    max_test_path = os.path.join(dir_name, 'test.jsonl')
+    count = len(open(max_test_path).readlines())
+    print(f'Number of rows in {max_test_path}: {count}')
+    with open(dir_name + '.csv', 'a') as f:
+        f.write(f'{str(count)},{output}')
+    print(f'wrote: {str(count)},{output.strip()}')
+    os.remove('output.csv')
+    for split_dir in split_paths:
+        split_dir_name = split_dir.split('/')[-1]
+        execute_training_loop()
+        with open('output.csv', 'r') as f:
+            output = f.read()
+        with open(dir_name + '.csv', 'a') as f:
+            f.write(f'{split_dir_name},{output}')
+        print(f'wrote: {split_dir_name},{output.strip()}')
+        os.remove('output.csv')
