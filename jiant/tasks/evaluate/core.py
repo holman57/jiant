@@ -342,6 +342,8 @@ class SpatialAccAndF1EvaluationScheme(BaseLogitsEvaluationScheme):
         precision = precision_score(y_true=labels, y_pred=preds)
         with open('output.csv', 'w') as f:
             f.write(f'{acc},{f1},{recall},{precision}\n')
+        with open('prediction.csv', 'w') as f:
+            f.write(f'{labels},{preds}')
         minor = {
             "acc": acc,
             "f1": f1,

@@ -58,15 +58,14 @@ tr_vl_te = [train_path, val_path, test_path]
 
 d = '../spatial-commonsense/data/baseline'
 baseline_path = [os.path.join(d, o) for o in os.listdir(d) if os.path.isdir(os.path.join(d, o))]
-baseline_path.remove('LOC-only')
 
 for dir in baseline_path:
     dir_name = dir.split('/')[-1]
     with open(dir_name + '.csv', 'w') as f:
         f.write('name,acc,f1,recall,precision\n')
     print('wrote:', dir_name + '.csv')
-    split_paths = [os.path.join(dir, o) for o in os.listdir(dir) if os.path.isdir(os.path.join(dir, o))]
-    split_paths = [x for x in split_paths if 'baseline' in x]
+    all_s_paths = [os.path.join(dir, o) for o in os.listdir(dir) if os.path.isdir(os.path.join(dir, o))]
+    split_paths = [x for x in all_s_paths if 'baseline' in x]
     for path in tr_vl_te:
         if os.path.isfile(path):
             os.remove(path)
