@@ -64,6 +64,12 @@ test_file.pop()
 for test in test_file:
     with open(test_path, 'w') as f:
         f.write(f'guid,label,sentence\n{test}')
+    tokenize_and_cache.main(tokenize_and_cache.RunConfiguration(
+        task_config_path=f"./spatial_experiment/spatial_config.json",
+        hf_pretrained_model_name_or_path="bert-base-uncased",
+        output_dir=f"./spatial_experiment/cache/spatial",
+        phases=["train", "val"],
+    ))
     run_args = main_runscript.RunConfiguration(
         jiant_task_container_config_path="./spatial_experiment/run_configs/spatial_run_config.json",
         output_dir="./spatial_experiment/runs/spatial",
@@ -78,8 +84,8 @@ for test in test_file:
         force_overwrite=False,
     )
     main_runscript.run_loop(run_args)
-    with open('prediction.csv', 'r') as f:
+    with open('output.csv', 'r') as f:
         prediction = f.read()
     with open('error.csv', 'a') as f:
-        f.write(f'{test.split(",")[2]},{test.split(",")[1]},{prediction.split(",")[1]}\n')
-
+        sentence = test.split(",")[2].replace("\n", "")
+        f.write(f'{sentence},{test.split(",")[1]},{prediction.split(",")[1]}\n')
