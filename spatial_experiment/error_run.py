@@ -56,36 +56,37 @@ run_args = main_runscript.RunConfiguration(
     do_save=True,
     force_overwrite=True,
 )
-main_runscript.run_loop(run_args)
 
-with open(test_path, 'r') as f:
-    test_file = f.readlines()
-test_file.pop()
-for test in test_file:
-    with open(test_path, 'w') as f:
-        f.write(f'guid,label,sentence\n{test}')
-    tokenize_and_cache.main(tokenize_and_cache.RunConfiguration(
-        task_config_path=f"./spatial_experiment/spatial_config.json",
-        hf_pretrained_model_name_or_path="bert-base-uncased",
-        output_dir=f"./spatial_experiment/cache/spatial",
-        phases=["train", "val"],
-    ))
-    run_args = main_runscript.RunConfiguration(
-        jiant_task_container_config_path="./spatial_experiment/run_configs/spatial_run_config.json",
-        output_dir="./spatial_experiment/runs/spatial",
-        hf_pretrained_model_name_or_path="bert-base-uncased",
-        model_path="./spatial_experiment/models/bert/model/model.p",
-        model_config_path="./spatial_experiment/models/bert/model/config.json",
-        learning_rate=1e-5,
-        eval_every_steps=500,
-        do_train=False,
-        do_val=False,
-        do_save=False,
-        force_overwrite=False,
-    )
-    main_runscript.run_loop(run_args)
-    with open('output.csv', 'r') as f:
-        prediction = f.read()
-    with open('error.csv', 'a') as f:
-        sentence = test.split(",")[2].replace("\n", "")
-        f.write(f'{sentence},{test.split(",")[1]},{prediction.split(",")[1]}\n')
+main_runscript.run_loop(run_args)
+#
+# with open(test_path, 'r') as f:
+#     test_file = f.readlines()
+# test_file.pop()
+# for test in test_file:
+#     with open(test_path, 'w') as f:
+#         f.write(f'guid,label,sentence\n{test}')
+#     tokenize_and_cache.main(tokenize_and_cache.RunConfiguration(
+#         task_config_path=f"./spatial_experiment/spatial_config.json",
+#         hf_pretrained_model_name_or_path="bert-base-uncased",
+#         output_dir=f"./spatial_experiment/cache/spatial",
+#         phases=["train", "val"],
+#     ))
+#     run_args = main_runscript.RunConfiguration(
+#         jiant_task_container_config_path="./spatial_experiment/run_configs/spatial_run_config.json",
+#         output_dir="./spatial_experiment/runs/spatial",
+#         hf_pretrained_model_name_or_path="bert-base-uncased",
+#         model_path="./spatial_experiment/models/bert/model/model.p",
+#         model_config_path="./spatial_experiment/models/bert/model/config.json",
+#         learning_rate=1e-5,
+#         eval_every_steps=500,
+#         do_train=False,
+#         do_val=False,
+#         do_save=False,
+#         force_overwrite=False,
+#     )
+#     main_runscript.run_loop(run_args)
+#     with open('output.csv', 'r') as f:
+#         prediction = f.read()
+#     with open('error.csv', 'a') as f:
+#         sentence = test.split(",")[2].replace("\n", "")
+#         f.write(f'{sentence},{test.split(",")[1]},{prediction.split(",")[1]}\n')
